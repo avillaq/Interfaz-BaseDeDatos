@@ -162,7 +162,6 @@ class Ventana(Frame):
     def fGuardar(self):
         ############################################################################################### 
         Ubicacion = self.txtUbicacion.get().split(" - ")
-        print(f"Ubicacion: {Ubicacion}")
         UbiPro = Ubicacion[0]
         UbiLoc = Ubicacion[1]
         UbiDic = Ubicacion[2]
@@ -211,14 +210,13 @@ class Ventana(Frame):
                                         
     def fEliminar(self):
         selected = self.grid.focus()                               
-        clave = self.grid.item(selected,'text')
-        if clave == '':
+        id_fiscal = self.grid.item(selected,'text')
+        if id_fiscal == '':
             messagebox.showwarning("Eliminar", 'Debes seleccionar un elemento.')            
         else:                           
-            valores = self.grid.item(selected,'values')
             r = messagebox.askquestion("Eliminar", "Deseas eliminar el registro seleccionado?\n")            
             if r == messagebox.YES:
-                n = self.operacion.eliminar(clave)
+                n = self.operacion.eliminar(id_fiscal)
                 if n == 1:
                     messagebox.showinfo("Eliminar", 'Elemento eliminado correctamente.')
                     self.limpiaGrid()
