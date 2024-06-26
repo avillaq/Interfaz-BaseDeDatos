@@ -225,17 +225,17 @@ class Ventana(Frame):
                                         
     def fEliminar(self):
         selected = self.grid.focus()                               
-        clave = self.grid.item(selected, "values")
-        marca = clave[0]
-        filtro = clave[1]
-        color = clave[2]
-        clase = clave[3]
-        mentolado = clave[4]
-
+        clave = self.grid.item(selected, "text")
+    
         if clave == '':
             messagebox.showwarning("Eliminar", 'Debes seleccionar un elemento.')            
-        else:                           
+        else: 
             valores = self.grid.item(selected,'values')
+            marca = valores[0]
+            filtro = valores[1]
+            color = valores[2]
+            clase = valores[3]
+            mentolado = valores[4]                        
             r = messagebox.askquestion("Eliminar", "Deseas eliminar el registro seleccionado?\n")            
             if r == messagebox.YES:
                 n = self.operacion.eliminar(marca, filtro, color, clase, mentolado)
