@@ -71,7 +71,7 @@ class Operaciones:
 
     def obtener_id_fiscal(self):
         cur = self.cnn.cursor()
-        cur.execute("SELECT EstIdeFisEst FROM estanco") 
+        cur.execute("SELECT EstIdeFisEst FROM estanco ORDER BY EstIdeFisEst ASC") 
         id_fiscal = cur.fetchall()
         cur.close()
         return id_fiscal
