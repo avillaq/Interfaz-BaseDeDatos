@@ -334,7 +334,7 @@ class Ventana(Frame):
         id_fiscal = self.operacion.obtener_id_fiscal()
         self.txtIdentificacion['values'] = [f[0] for f in id_fiscal]
         
-        lbl2 = Label(frame2,text="Marca: ")
+        lbl2 = Label(frame2,text="Marca*: ")
         lbl2.place(x=3,y=self.aumentarPosEtiqueta())
         self.txtMarca = ttk.Combobox(frame2, state="readonly")
         self.txtMarca.place(x=3, y=self.aumentarPosCampo(), width=130, height=20)
