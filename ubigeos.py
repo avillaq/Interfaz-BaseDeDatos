@@ -184,6 +184,7 @@ class Ventana(Frame):
     def fCancelar(self):
         r = messagebox.askquestion("Cancelar", "Esta seguro que desea cancelar la operación actual")
         if r == messagebox.YES:
+            self.habilitarCajas("normal")
             self.limpiarCajas() 
             self.habilitarBtnGuardar("disabled")      
             self.habilitarBtnOper("normal")
