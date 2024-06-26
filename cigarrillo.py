@@ -35,7 +35,7 @@ class Operaciones:
         cur.close()    
         return datos
     
-    def insertar(self, CigMar, CigCol, CigFil, CigClaTra, CigCarMen, CigCanNic, CigCanAlq, CigPreCos, CigPreVen):
+    def insertar(self, CigMar, CigFil, CigCol, CigClaTra, CigCarMen, CigCanNic, CigCanAlq, CigPreCos, CigPreVen):
         cur = self.cnn.cursor()
         sql = "INSERT INTO {} (CigMar, CigCol, CigFil, CigClaTra, CigCarMen, CigCanNic, CigCanAlq, CigPreCos, CigPreVen) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)".format(NOMBRE_TABLA)
         cur.execute(sql, (CigMar, CigCol, CigFil, CigClaTra, CigCarMen, CigCanNic, CigCanAlq, CigPreCos, CigPreVen))
@@ -44,7 +44,7 @@ class Operaciones:
         cur.close()
         return n
     
-    def eliminar(self, CigMar, CigCol, CigFil, CigClaTra, CigCarMen):
+    def eliminar(self, CigMar, CigFil, CigCol, CigClaTra, CigCarMen):
         cur = self.cnn.cursor()
         sql = "DELETE FROM {} WHERE CigMar = %s AND CigCol = %s AND CigFil = %s AND CigClaTra = %s AND CigCarMen = %s".format(NOMBRE_TABLA)
         cur.execute(sql, (CigMar, CigCol, CigFil, CigClaTra, CigCarMen))
@@ -53,7 +53,7 @@ class Operaciones:
         cur.close()
         return n
 
-    def modificar(self, CigMar, CigCol, CigFil, CigClaTra, CigCarMen, CigCanNic, CigCanAlq, CigPreCos, CigPreVen):
+    def modificar(self, CigMar, CigFil, CigCol, CigClaTra, CigCarMen, CigCanNic, CigCanAlq, CigPreCos, CigPreVen):
         cur = self.cnn.cursor()
         sql = "UPDATE {} SET CigCanNic = %s, CigCanAlq = %s, CigPreCos = %s, CigPreVen = %s WHERE CigMar = %s AND CigCol = %s AND CigFil = %s AND CigClaTra = %s AND CigCarMen = %s".format(NOMBRE_TABLA)
         cur.execute(sql, (CigCanNic, CigCanAlq, CigPreCos, CigPreVen, CigMar, CigCol, CigFil, CigClaTra, CigCarMen))
@@ -157,10 +157,10 @@ class Ventana(Frame):
     def fGuardar(self):
         ############################################################################################### 
         if self.id ==-1:       
-            self.operacion.insertar(self.txtMarca.get(), self.txtColor.get()[0], self.txtFiltro.get()[0], self.txtClase.get(), self.txtMentolado.get()[0], self.txtCanNicotina.get(), self.txtCanAlquitran.get(), self.txtCosto.get(), self.txtVenta.get())      
+            self.operacion.insertar(self.txtMarca.get(), self.txtFiltro.get()[0], self.txtColor.get()[0], self.txtClase.get(), self.txtMentolado.get()[0], self.txtCanNicotina.get(), self.txtCanAlquitran.get(), self.txtCosto.get(), self.txtVenta.get())      
             messagebox.showinfo("Insertar", 'Elemento insertado correctamente.')
         else:
-            self.operacion.modificar(self.txtMarca.get(), self.txtColor.get(), self.txtFiltro.get(), self.txtClase.get(), self.txtMentolado.get(), self.txtCanNicotina.get(), self.txtCanAlquitran.get(), self.txtCosto.get(), self.txtVenta.get())
+            self.operacion.modificar(self.txtMarca.get(), self.txtFiltro.get(), self.txtColor.get(), self.txtClase.get(), self.txtMentolado.get(), self.txtCanNicotina.get(), self.txtCanAlquitran.get(), self.txtCosto.get(), self.txtVenta.get())
             messagebox.showinfo("Modificar", 'Elemento modificado correctamente.')
             self.id = -1  
             
@@ -187,8 +187,8 @@ class Ventana(Frame):
             self.limpiarCajas()
             ###############################################################################################
             self.txtMarca.insert(0,valores[0])
-            self.txtColor.insert(0,valores[1])
-            self.txtFiltro.insert(0,valores[2])
+            self.txtFiltro.insert(0,valores[1])
+            self.txtColor.insert(0,valores[2])
             self.txtClase.insert(0,valores[3])
             self.txtMentolado.insert(0,valores[4])
             self.txtCanNicotina.insert(0,valores[5])
@@ -211,14 +211,20 @@ class Ventana(Frame):
                                         
     def fEliminar(self):
         selected = self.grid.focus()                               
-        clave = self.grid.item(selected,'text')
+        clave = self.grid.item(selected, "values")
+        marca = clave[0]
+        filtro = clave[1]
+        color = clave[2]
+        clase = clave[3]
+        mentolado = clave[4]
+
         if clave == '':
             messagebox.showwarning("Eliminar", 'Debes seleccionar un elemento.')            
         else:                           
             valores = self.grid.item(selected,'values')
             r = messagebox.askquestion("Eliminar", "Deseas eliminar el registro seleccionado?\n")            
             if r == messagebox.YES:
-                n = self.operacion.eliminar(clave)
+                n = self.operacion.eliminar(marca, filtro, color, clase, mentolado)
                 if n == 1:
                     messagebox.showinfo("Eliminar", 'Elemento eliminado correctamente.')
                     self.limpiaGrid()
@@ -259,15 +265,14 @@ class Ventana(Frame):
         marcas = self.operacion.obtener_marcas()
         self.txtMarca['values'] = [f[0] for f in marcas]
         
-        lbl2 = Label(frame2,text="Color: ")
+        lbl2 = Label(frame2,text="Filtro: ")
         lbl2.place(x=3,y=self.aumentarPosEtiqueta())
-        self.txtColor = ttk.Combobox(frame2, state="readonly", values=["Negra", "Rubia"])
-        self.txtColor.place(x=3, y=self.aumentarPosCampo(), width=130, height=20)
-        
-        lbl3 = Label(frame2,text="Filtro: ")
-        lbl3.place(x=3,y=self.aumentarPosEtiqueta())
         self.txtFiltro = ttk.Combobox(frame2, state="readonly", values=["Si", "No"])
         self.txtFiltro.place(x=3, y=self.aumentarPosCampo(), width=130, height=20)
+        lbl3 = Label(frame2,text="Color: ")
+        lbl3.place(x=3,y=self.aumentarPosEtiqueta())
+        self.txtColor = ttk.Combobox(frame2, state="readonly", values=["Negra", "Rubia"])
+        self.txtColor.place(x=3, y=self.aumentarPosCampo(), width=130, height=20)
         
         lbl4 = Label(frame2,text="Clase de Tratamiento: ")
         lbl4.place(x=3,y=self.aumentarPosEtiqueta())
@@ -313,7 +318,7 @@ class Ventana(Frame):
         ###################################### MODIFICAR AQUI ###############################################
 
         # Modificar los nombres de las columnas en la lista nombre_columnas
-        nombre_columnas = ["Marca", "Color", "Filtro", "Clase Tratamiento", "Mentolado", "C. Nicotina", "C. Alquitran", "P. de Costo", "P. de Venta"]
+        nombre_columnas = ["Marca", "Filtro", "Color", "Clase Tratamiento", "Mentolado", "C. Nicotina", "C. Alquitran", "P. de Costo", "P. de Venta"]
 
         ######################################################################################################
 
