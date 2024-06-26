@@ -284,9 +284,15 @@ class Ventana(Frame):
             messagebox.showwarning("Eliminar", 'Debes seleccionar un elemento.')            
         else:                           
             valores = self.grid.item(selected,'values')
+            id_fiscal = valores[0]
+            marca = valores[1]
+            filtro = valores[2]
+            color = valores[3]
+            clase = valores[4]
+            mentolado = valores[5] 
             r = messagebox.askquestion("Eliminar", "Deseas eliminar el registro seleccionado?\n")            
             if r == messagebox.YES:
-                n = self.operacion.eliminar(clave)
+                n = self.operacion.eliminar(id_fiscal, marca, filtro[0], color[0], clase, mentolado[0])
                 if n == 1:
                     messagebox.showinfo("Eliminar", 'Elemento eliminado correctamente.')
                     self.limpiaGrid()
