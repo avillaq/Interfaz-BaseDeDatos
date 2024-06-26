@@ -33,7 +33,7 @@ class Operaciones:
         consulta_sql = """
         SELECT t.*, u.*
         FROM {} AS t
-        JOIN Ubigeo AS u ON t.EstUbi = u.UbiCod
+        JOIN Ubigeo AS u ON t.EstUbi = u.UbiCod ORDER BY EstIdeFisEst ASC
         """.format(NOMBRE_TABLA)
         cur.execute(consulta_sql)
         datos = cur.fetchall()
