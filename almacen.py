@@ -165,10 +165,10 @@ class Ventana(Frame):
         opciones_mentolado = self.operacion.obtener_opciones_mentolado(marca_seleccionada)
         
         # Actualizar las opciones de los ComboBox con las nuevas opciones
-        self.txtFiltro['values'] = opciones_filtro
-        self.txtColor['values'] = opciones_color
+        self.txtFiltro['values'] = [self.obtenerDatoEquivalente("filtro",f[0]) for f in opciones_filtro]
+        self.txtColor['values'] = [self.obtenerDatoEquivalente("color",f[0]) for f in opciones_color]
         self.txtClase['values'] = opciones_clase
-        self.txtMentolado['values'] = opciones_mentolado
+        self.txtMentolado['values'] = [self.obtenerDatoEquivalente("mentolado",f[0]) for f in opciones_mentolado]
     
         # Opcional: Limpiar la selección actual de los ComboBox si es necesario
         self.txtColor.set('')
@@ -184,8 +184,6 @@ class Ventana(Frame):
         self.txtClase.configure(state=estado)
         self.txtMentolado.configure(state=estado)
         self.txtUnidades.configure(state=estado)
-
-
 
     def limpiarCajas(self):
         self.txtIdentificacion.delete(0,END)
@@ -213,7 +211,7 @@ class Ventana(Frame):
         ############################################################################################### 
         datos = self.operacion.consultar()        
         for row in datos:            
-            self.grid.insert("",END,text=row[0], values=(row[0], row[1], row[2], row[3], row[4], row[5], row[6]))
+            self.grid.insert("",END,text=row[0], values=(row[0], row[1], self.obtenerDatoEquivalente("filtro", row[2]), self.obtenerDatoEquivalente("color", row[3]), row[4], self.obtenerDatoEquivalente("mentolado", row[5]), row[6]))
         
         if len(self.grid.get_children()) > 0:
             self.grid.selection_set( self.grid.get_children()[0] )
@@ -231,7 +229,7 @@ class Ventana(Frame):
             self.operacion.insertar(self.txtIdentificacion.get(),self.txtMarca.get(), self.txtFiltro.get()[0], self.txtColor.get()[0], self.txtClase.get(), self.txtMentolado.get()[0], self.txtUnidades.get())         
             messagebox.showinfo("Insertar", 'Elemento insertado correctamente.')
         else:
-            self.operacion.modificar(self.txtIdentificacion.get(),self.txtMarca.get(), self.txtFiltro.get(), self.txtColor.get(), self.txtClase.get(), self.txtMentolado.get(), self.txtUnidades.get())
+            self.operacion.modificar(self.txtIdentificacion.get(),self.txtMarca.get(), self.txtFiltro.get()[0], self.txtColor.get()[0], self.txtClase.get(), self.txtMentolado.get()[0], self.txtUnidades.get())
             messagebox.showinfo("Modificar", 'Elemento modificado correctamente.')
             self.id = -1  
             
