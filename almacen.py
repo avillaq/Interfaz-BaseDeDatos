@@ -35,7 +35,7 @@ class Operaciones:
         cur.close()    
         return datos
     
-    def insertar(self, AlmIdeFisEst, AlmCigMar, AlmCigCol, AlmCigFil, AlmClaTra, AlmCarMen, AlmUniSto):
+    def insertar(self, AlmIdeFisEst, AlmCigMar, AlmCigFil, AlmCigCol, AlmClaTra, AlmCarMen, AlmUniSto):
         cur = self.cnn.cursor()
         sql = "INSERT INTO {} (AlmIdeFisEst, AlmCigMar, AlmCigCol, AlmCigFil, AlmClaTra, AlmCarMen, AlmUniSto) VALUES (%s, %s, %s, %s, %s, %s, %s)".format(NOMBRE_TABLA)
         cur.execute(sql, (AlmIdeFisEst, AlmCigMar, AlmCigCol, AlmCigFil, AlmClaTra, AlmCarMen, AlmUniSto))
@@ -44,7 +44,7 @@ class Operaciones:
         cur.close()
         return n
     
-    def eliminar(self, AlmIdeFisEst, AlmCigMar, AlmCigCol, AlmCigFil, AlmClaTra, AlmCarMen):
+    def eliminar(self, AlmIdeFisEst, AlmCigMar, AlmCigFil, AlmCigCol, AlmClaTra, AlmCarMen):
         cur = self.cnn.cursor()
         sql = "DELETE FROM {} WHERE AlmIdeFisEst = %s AND AlmCigMar = %s AND AlmCigCol = %s AND AlmCigFil = %s AND AlmClaTra = %s AND AlmCarMen = %s".format(NOMBRE_TABLA)
         cur.execute(sql, (AlmIdeFisEst, AlmCigMar, AlmCigCol, AlmCigFil, AlmClaTra, AlmCarMen))
@@ -53,7 +53,7 @@ class Operaciones:
         cur.close()
         return n
 
-    def modificar(self, AlmIdeFisEst, AlmCigMar, AlmCigCol, AlmCigFil, AlmClaTra, AlmCarMen, AlmUniSto):
+    def modificar(self, AlmIdeFisEst, AlmCigMar, AlmCigFil, AlmCigCol, AlmClaTra, AlmCarMen, AlmUniSto):
         cur = self.cnn.cursor()
         sql = "UPDATE {} SET AlmUniSto = %s WHERE AlmIdeFisEst = %s AND AlmCigMar = %s AND AlmCigCol = %s AND AlmCigFil = %s AND AlmClaTra = %s AND AlmCarMen = %s".format(NOMBRE_TABLA)
         cur.execute(sql, (AlmUniSto, AlmIdeFisEst, AlmCigMar, AlmCigCol, AlmCigFil, AlmClaTra, AlmCarMen))
@@ -61,6 +61,20 @@ class Operaciones:
         self.cnn.commit()
         cur.close()
         return n
+
+    def obtener_marcas(self):
+        cur = self.cnn.cursor()
+        cur.execute("SELECT DISTINCT CigMar FROM cigarrillo") 
+        marcas = cur.fetchall()
+        cur.close()
+        return marcas
+
+    def obtener_id_fiscal(self):
+        cur = self.cnn.cursor()
+        cur.execute("SELECT EstIdeFisEst FROM estanco") 
+        id_fiscal = cur.fetchall()
+        cur.close()
+        return id_fiscal
 
 #############################################################################################################################################
 
@@ -149,10 +163,10 @@ class Ventana(Frame):
     def fGuardar(self):
         ############################################################################################### 
         if self.id ==-1:       
-            self.operacion.insertar(self.txtIdentificacion.get(),self.txtMarca.get(), self.txtColor.get(), self.txtFiltro.get(), self.txtClase.get(), self.txtMentolado.get(), self.txtUnidades.get())         
+            self.operacion.insertar(self.txtIdentificacion.get(),self.txtMarca.get(), self.txtFiltro.get(), self.txtColor.get(), self.txtClase.get(), self.txtMentolado.get(), self.txtUnidades.get())         
             messagebox.showinfo("Insertar", 'Elemento insertado correctamente.')
         else:
-            self.operacion.modificar(self.txtIdentificacion.get(),self.txtMarca.get(), self.txtColor.get(), self.txtFiltro.get(), self.txtClase.get(), self.txtMentolado.get(), self.txtUnidades.get())
+            self.operacion.modificar(self.txtIdentificacion.get(),self.txtMarca.get(), self.txtFiltro.get(), self.txtColor.get(), self.txtClase.get(), self.txtMentolado.get(), self.txtUnidades.get())
             messagebox.showinfo("Modificar", 'Elemento modificado correctamente.')
             self.id = -1  
             
@@ -180,8 +194,8 @@ class Ventana(Frame):
             ###############################################################################################
             self.txtIdentificacion.insert(0,valores[0])
             self.txtMarca.insert(0,valores[1])   
-            self.txtColor.insert(0,valores[2])
-            self.txtFiltro.insert(0,valores[3])    
+            self.txtFiltro.insert(0,valores[2])    
+            self.txtColor.insert(0,valores[3])
             self.txtClase.insert(0,valores[4])
             self.txtMentolado.insert(0,valores[5])
             self.txtUnidades.insert(0,valores[6])
@@ -192,9 +206,13 @@ class Ventana(Frame):
 
             # No se debe modificar el codigo
             self.txtIdentificacion.configure(state="disabled")
-            
+            self.txtMarca.configure(state="disabled")
+            self.txtColor.configure(state="disabled")
+            self.txtFiltro.configure(state="disabled")
+            self.txtClase.configure(state="disabled")
+            self.txtMentolado.configure(state="disabled")
 
-            self.txtIdentificacion.focus()
+            self.txtUnidades.focus()
                                         
     def fEliminar(self):
         selected = self.grid.focus()                               
@@ -241,28 +259,37 @@ class Ventana(Frame):
         # Solo se debe modificar el nombre de las etiquetas y los Entry
         lbl1 = Label(frame2,text="Identificacion Fiscal: ")
         lbl1.place(x=3,y=self.aumentarPosEtiqueta())        
-        self.txtIdentificacion=Entry(frame2)
-        self.txtIdentificacion.place(x=3,y=self.aumentarPosCampo(),width=130, height=20)                
+        self.txtIdentificacion=ttk.Combobox(frame2, state="readonly")
+        self.txtIdentificacion.place(x=3,y=self.aumentarPosCampo(),width=130, height=20)   
+        id_fiscal = self.operacion.obtener_id_fiscal()
+        self.txtIdentificacion['values'] = [f[0] for f in id_fiscal]
+        
         lbl2 = Label(frame2,text="Marca: ")
         lbl2.place(x=3,y=self.aumentarPosEtiqueta())
-        self.txtMarca=Entry(frame2)
-        self.txtMarca.place(x=3,y=self.aumentarPosCampo(),width=130, height=20)
-        lbl3 = Label(frame2,text="Color: ")
+        self.txtMarca = ttk.Combobox(frame2, state="readonly")
+        self.txtMarca.place(x=3, y=self.aumentarPosCampo(), width=130, height=20)
+        marcas = self.operacion.obtener_marcas()
+        self.txtMarca['values'] = [f[0] for f in marcas]
+        
+        lbl3 = Label(frame2,text="Filtro: ")
         lbl3.place(x=3,y=self.aumentarPosEtiqueta())
-        self.txtColor=Entry(frame2)
-        self.txtColor.place(x=3,y=self.aumentarPosCampo(),width=130, height=20)
-        lbl4 = Label(frame2,text="Filtro: ")
+        self.txtFiltro = ttk.Combobox(frame2, state="readonly", values=["Si", "No"])
+        self.txtFiltro.place(x=3, y=self.aumentarPosCampo(), width=130, height=20)
+
+        lbl4 = Label(frame2,text="Color: ")
         lbl4.place(x=3,y=self.aumentarPosEtiqueta())
-        self.txtFiltro=Entry(frame2)
-        self.txtFiltro.place(x=3,y=self.aumentarPosCampo(),width=130, height=20)
+        self.txtColor = ttk.Combobox(frame2, state="readonly", values=["Negra", "Rubia"])
+        self.txtColor.place(x=3, y=self.aumentarPosCampo(), width=130, height=20)
+        
         lbl5 = Label(frame2,text="Clase de Tratamiento: ")
         lbl5.place(x=3,y=self.aumentarPosEtiqueta())
-        self.txtClase=Entry(frame2)
-        self.txtClase.place(x=3,y=self.aumentarPosCampo(),width=130, height=20)
+        self.txtClase = ttk.Combobox(frame2, state="readonly", values=["Light", "SuperLight", "UltraLight", "Normal"])
+        self.txtClase.place(x=3, y=self.aumentarPosCampo(), width=130, height=20)
+        
         lbl6 = Label(frame2,text="Mentolado: ")
         lbl6.place(x=3,y=self.aumentarPosEtiqueta())
-        self.txtMentolado=Entry(frame2)
-        self.txtMentolado.place(x=3,y=self.aumentarPosCampo(),width=130, height=20)
+        self.txtMentolado = ttk.Combobox(frame2, state="readonly", values=["Si", "No"])
+        self.txtMentolado.place(x=3, y=self.aumentarPosCampo(), width=130, height=20)
         lbl7 = Label(frame2,text="Unidades en Stock: ")
         lbl7.place(x=3,y=self.aumentarPosEtiqueta())
         self.txtUnidades=Entry(frame2)
@@ -287,7 +314,7 @@ class Ventana(Frame):
         ###################################### MODIFICAR AQUI ###############################################
 
         # Modificar los nombres de las columnas en la lista nombre_columnas
-        nombre_columnas = ["Identificacion Fiscal", "Marca", "Color", "Filtro", "Clase de Tratamiento", "Mentolado", "Unidades en Stock"]
+        nombre_columnas = ["Identificacion Fiscal", "Marca", "Filtro", "Color", "Clase de Tratamiento", "Mentolado", "Unidades en Stock"]
 
         ######################################################################################################
 
