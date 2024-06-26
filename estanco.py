@@ -51,7 +51,7 @@ class Operaciones:
     
     def eliminar(self, EstIdeFisEst):
         cur = self.cnn.cursor()
-        sql = "DELETE FROM {} WHERE ProMar = %s".format(NOMBRE_TABLA)
+        sql = "DELETE FROM {} WHERE EstIdeFisEst = %s".format(NOMBRE_TABLA)
         cur.execute(sql, (EstIdeFisEst,))
         n = cur.rowcount
         self.cnn.commit()
