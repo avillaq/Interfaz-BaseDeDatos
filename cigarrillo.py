@@ -102,7 +102,21 @@ class Ventana(Frame):
         else :
             self.posCampos += 50
         return self.posCampos
-                   
+    
+    def obtenerDatoEquivalente(self, tipo, dato):
+        if tipo == "color":
+            if dato == "N":
+                return "Negra"
+            elif dato == "R":
+                return "Rubia"
+
+        if tipo == "filtro" or tipo == "mentolado":
+            if dato == "S":
+                return "Si"
+            elif dato == "N":
+                return "No"
+        return dato
+
     def habilitarCajas(self,estado):
         self.txtMarca.configure(state=estado)
         self.txtColor.configure(state=estado)
@@ -142,7 +156,7 @@ class Ventana(Frame):
         ############################################################################################### 
         datos = self.operacion.consultar()        
         for row in datos:            
-            self.grid.insert("",END,text=row[0], values=(row[0], row[1], row[2], row[3], row[4], row[5], row[6] , row[7], row[8]))
+            self.grid.insert("",END,text=row[0], values=(row[0], self.obtenerDatoEquivalente("filtro", row[1]), self.obtenerDatoEquivalente("color", row[2]), row[3], self.obtenerDatoEquivalente("mentolado", row[4]), row[5], row[6] , row[7], row[8]))
         
         if len(self.grid.get_children()) > 0:
             self.grid.selection_set( self.grid.get_children()[0] )
@@ -160,12 +174,12 @@ class Ventana(Frame):
             self.operacion.insertar(self.txtMarca.get(), self.txtFiltro.get()[0], self.txtColor.get()[0], self.txtClase.get(), self.txtMentolado.get()[0], self.txtCanNicotina.get(), self.txtCanAlquitran.get(), self.txtCosto.get(), self.txtVenta.get())      
             messagebox.showinfo("Insertar", 'Elemento insertado correctamente.')
         else:
-            self.operacion.modificar(self.txtMarca.get(), self.txtFiltro.get(), self.txtColor.get(), self.txtClase.get(), self.txtMentolado.get(), self.txtCanNicotina.get(), self.txtCanAlquitran.get(), self.txtCosto.get(), self.txtVenta.get())
+            self.operacion.modificar(self.txtMarca.get(), self.txtFiltro.get()[0], self.txtColor.get()[0], self.txtClase.get(), self.txtMentolado.get()[0], self.txtCanNicotina.get(), self.txtCanAlquitran.get(), self.txtCosto.get(), self.txtVenta.get())
             messagebox.showinfo("Modificar", 'Elemento modificado correctamente.')
             self.id = -1  
             
         # Habilitar el codigo para el siguiente registro
-        self.txtCanNicotina.configure(state="normal")
+        self.habilitarCajas("normal")
 
         self.limpiaGrid()
         self.llenaDatos() 
