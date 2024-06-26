@@ -141,6 +141,20 @@ class Ventana(Frame):
             self.posCampos += 50
         return self.posCampos
     
+    def obtenerDatoEquivalente(self, tipo, dato):
+        if tipo == "color":
+            if dato == "N":
+                return "Negra"
+            elif dato == "R":
+                return "Rubia"
+
+        if tipo == "filtro" or tipo == "mentolado":
+            if dato == "S":
+                return "Si"
+            elif dato == "N":
+                return "No"
+        return dato
+    
     def on_marca_selected(self, event):
         marca_seleccionada = self.txtMarca.get()
         
