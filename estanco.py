@@ -67,12 +67,19 @@ class Operaciones:
         cur.close()
         return n
 
-    def obtener_ubicaciones(self):
+    def obtener_ubicaciones_disponibles(self):
         cur = self.cnn.cursor()
-        cur.execute("SELECT UbiCod,UbiPro, UbiLoc, UbiDic FROM ubigeo ORDER BY UbiLoc ASC") 
-        fabricantes = cur.fetchall()
+        cur.execute("""
+            SELECT UbiCod, UbiPro, UbiLoc, UbiDic 
+            FROM ubigeo 
+            WHERE NOT EXISTS (
+                SELECT 1 FROM estanco WHERE estanco.EstUbi = ubigeo.UbiCod
+            )
+            ORDER BY UbiLoc ASC
+        """) 
+        ubicaciones_disponibles = cur.fetchall()
         cur.close()
-        return fabricantes
+        return ubicaciones_disponibles
 
 
     def obtener_id_ubicacion(self, UbiPro, UbiLoc, UbiDic):
@@ -167,13 +174,17 @@ class Ventana(Frame):
         UbiDic = Ubicacion[2]
         id_ubicacion = self.operacion.obtener_id_ubicacion(UbiPro, UbiLoc, UbiDic)
         if self.id ==-1:
-            self.operacion.insertar(self.txtIdeFiscal.get(),self.txtNumExpendiduria.get(), self.txtNombre.get(), id_ubicacion)           
+            self.operacion.insertar(self.txtIdeFiscal.get(),self.txtNumExpendiduria.get(), self.txtNombre.get(), id_ubicacion)
             messagebox.showinfo("Insertar", 'Elemento insertado correctamente.')
         else:
             self.operacion.modificar(self.txtIdeFiscal.get(),self.txtNumExpendiduria.get(), self.txtNombre.get(), id_ubicacion)
             messagebox.showinfo("Modificar", 'Elemento modificado correctamente.')
             self.id = -1
-            
+        
+        # Actualizar la lista de ubicaciones disponibles
+        ubicaciones = self.operacion.obtener_ubicaciones_disponibles()
+        self.txtUbicacion['values'] = [f"{f[1]} - {f[2]} - {f[3]}" for f in ubicaciones]
+
         # Habilitar el codigo para el siguiente registro
         self.txtIdeFiscal.configure(state="normal")
 
@@ -221,6 +232,11 @@ class Ventana(Frame):
                     messagebox.showinfo("Eliminar", 'Elemento eliminado correctamente.')
                     self.limpiaGrid()
                     self.llenaDatos()
+
+                    # Actualizar la lista de ubicaciones disponibles
+                    ubicaciones = self.operacion.obtener_ubicaciones_disponibles()
+                    self.txtUbicacion['values'] = [f"{f[1]} - {f[2]} - {f[3]}" for f in ubicaciones]
+
                 else:
                     messagebox.showwarning("Eliminar", 'No fue posible eliminar el elemento.')
                             
@@ -267,7 +283,7 @@ class Ventana(Frame):
         lbl4.place(x=3,y=self.aumentarPosEtiqueta())        
         self.txtUbicacion = ttk.Combobox(frame2, state="readonly")
         self.txtUbicacion.place(x=3, y=self.aumentarPosCampo(), width=130, height=20)
-        ubicaciones = self.operacion.obtener_ubicaciones()
+        ubicaciones = self.operacion.obtener_ubicaciones_disponibles()
         self.txtUbicacion['values'] = [f"{f[1]} - {f[2]} - {f[3]}" for f in ubicaciones]
         ######################################################################################################
 
