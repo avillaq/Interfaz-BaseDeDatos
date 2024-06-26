@@ -76,6 +76,36 @@ class Operaciones:
         cur.close()
         return id_fiscal
 
+    # Operaciones para obtener las opciones válidas para los otros campos basado en la marca seleccionada
+
+    def obtener_opciones_filtro(self, marca):
+        cur = self.cnn.cursor()
+        cur.execute("SELECT DISTINCT CigFil FROM cigarrillo WHERE CigMar = %s", (marca,))
+        opciones_filtro = cur.fetchall()
+        cur.close()
+        return opciones_filtro
+    
+    def obtener_opciones_color(self, marca):
+        cur = self.cnn.cursor()
+        cur.execute("SELECT DISTINCT CigCol FROM cigarrillo WHERE CigMar = %s", (marca,))
+        opciones_color = cur.fetchall()
+        cur.close()
+        return opciones_color
+    
+    def obtener_opciones_clase(self, marca):
+        cur = self.cnn.cursor()
+        cur.execute("SELECT DISTINCT CigClaTra FROM cigarrillo WHERE CigMar = %s", (marca,))
+        opciones_clase = cur.fetchall()
+        cur.close()
+        return opciones_clase
+    
+    def obtener_opciones_mentolado(self, marca):
+        cur = self.cnn.cursor()
+        cur.execute("SELECT DISTINCT CigCarMen FROM cigarrillo WHERE CigMar = %s", (marca,))
+        opciones_mentolado = cur.fetchall()
+        cur.close()
+        return opciones_mentolado
+
 #############################################################################################################################################
 
 
@@ -110,12 +140,33 @@ class Ventana(Frame):
         else :
             self.posCampos += 50
         return self.posCampos
-                   
+    
+    def on_marca_selected(self, event):
+        marca_seleccionada = self.txtMarca.get()
+        
+        # Consultar las opciones válidas para los otros campos basado en la marca seleccionada
+        opciones_filtro = self.operacion.obtener_opciones_filtro(marca_seleccionada)
+        opciones_color = self.operacion.obtener_opciones_color(marca_seleccionada)
+        opciones_clase = self.operacion.obtener_opciones_clase(marca_seleccionada)
+        opciones_mentolado = self.operacion.obtener_opciones_mentolado(marca_seleccionada)
+        
+        # Actualizar las opciones de los ComboBox con las nuevas opciones
+        self.txtFiltro['values'] = opciones_filtro
+        self.txtColor['values'] = opciones_color
+        self.txtClase['values'] = opciones_clase
+        self.txtMentolado['values'] = opciones_mentolado
+    
+        # Opcional: Limpiar la selección actual de los ComboBox si es necesario
+        self.txtColor.set('')
+        self.txtFiltro.set('')
+        self.txtClase.set('')
+        self.txtMentolado.set('')
+    
     def habilitarCajas(self,estado):
         self.txtIdentificacion.configure(state=estado)
         self.txtMarca.configure(state=estado)
-        self.txtColor.configure(state=estado)
         self.txtFiltro.configure(state=estado)
+        self.txtColor.configure(state=estado)
         self.txtClase.configure(state=estado)
         self.txtMentolado.configure(state=estado)
         self.txtUnidades.configure(state=estado)
@@ -125,8 +176,8 @@ class Ventana(Frame):
     def limpiarCajas(self):
         self.txtIdentificacion.delete(0,END)
         self.txtMarca.delete(0,END)
-        self.txtColor.delete(0,END)
         self.txtFiltro.delete(0,END)
+        self.txtColor.delete(0,END)
         self.txtClase.delete(0,END)
         self.txtMentolado.delete(0,END)
         self.txtUnidades.delete(0,END)
@@ -163,7 +214,7 @@ class Ventana(Frame):
     def fGuardar(self):
         ############################################################################################### 
         if self.id ==-1:       
-            self.operacion.insertar(self.txtIdentificacion.get(),self.txtMarca.get(), self.txtFiltro.get(), self.txtColor.get(), self.txtClase.get(), self.txtMentolado.get(), self.txtUnidades.get())         
+            self.operacion.insertar(self.txtIdentificacion.get(),self.txtMarca.get(), self.txtFiltro.get()[0], self.txtColor.get()[0], self.txtClase.get(), self.txtMentolado.get()[0], self.txtUnidades.get())         
             messagebox.showinfo("Insertar", 'Elemento insertado correctamente.')
         else:
             self.operacion.modificar(self.txtIdentificacion.get(),self.txtMarca.get(), self.txtFiltro.get(), self.txtColor.get(), self.txtClase.get(), self.txtMentolado.get(), self.txtUnidades.get())
@@ -171,7 +222,7 @@ class Ventana(Frame):
             self.id = -1  
             
         # Habilitar el codigo para el siguiente registro
-        self.txtIdentificacion.configure(state="normal")
+        self.habilitarCajas("normal")
 
         self.limpiaGrid()
         self.llenaDatos() 
@@ -270,7 +321,8 @@ class Ventana(Frame):
         self.txtMarca.place(x=3, y=self.aumentarPosCampo(), width=130, height=20)
         marcas = self.operacion.obtener_marcas()
         self.txtMarca['values'] = [f[0] for f in marcas]
-        
+        self.txtMarca.bind("<<ComboboxSelected>>", self.on_marca_selected)
+
         lbl3 = Label(frame2,text="Filtro: ")
         lbl3.place(x=3,y=self.aumentarPosEtiqueta())
         self.txtFiltro = ttk.Combobox(frame2, state="readonly", values=["Si", "No"])
