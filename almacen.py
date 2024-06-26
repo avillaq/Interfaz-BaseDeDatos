@@ -342,24 +342,27 @@ class Ventana(Frame):
         self.txtMarca['values'] = [f[0] for f in marcas]
         self.txtMarca.bind("<<ComboboxSelected>>", self.on_marca_selected)
 
+
+        # Las opciones estarán vacías hasta que se seleccione una marca.
+
         lbl3 = Label(frame2,text="Filtro: ")
         lbl3.place(x=3,y=self.aumentarPosEtiqueta())
-        self.txtFiltro = ttk.Combobox(frame2, state="readonly", values=["Si", "No"])
+        self.txtFiltro = ttk.Combobox(frame2, state="readonly", values=[])
         self.txtFiltro.place(x=3, y=self.aumentarPosCampo(), width=130, height=20)
 
         lbl4 = Label(frame2,text="Color: ")
         lbl4.place(x=3,y=self.aumentarPosEtiqueta())
-        self.txtColor = ttk.Combobox(frame2, state="readonly", values=["Negra", "Rubia"])
+        self.txtColor = ttk.Combobox(frame2, state="readonly", values=[])
         self.txtColor.place(x=3, y=self.aumentarPosCampo(), width=130, height=20)
         
         lbl5 = Label(frame2,text="Clase de Tratamiento: ")
         lbl5.place(x=3,y=self.aumentarPosEtiqueta())
-        self.txtClase = ttk.Combobox(frame2, state="readonly", values=["Light", "SuperLight", "UltraLight", "Normal"])
+        self.txtClase = ttk.Combobox(frame2, state="readonly", values=[])
         self.txtClase.place(x=3, y=self.aumentarPosCampo(), width=130, height=20)
         
         lbl6 = Label(frame2,text="Mentolado: ")
         lbl6.place(x=3,y=self.aumentarPosEtiqueta())
-        self.txtMentolado = ttk.Combobox(frame2, state="readonly", values=["Si", "No"])
+        self.txtMentolado = ttk.Combobox(frame2, state="readonly", values=[])
         self.txtMentolado.place(x=3, y=self.aumentarPosCampo(), width=130, height=20)
         lbl7 = Label(frame2,text="Unidades en Stock: ")
         lbl7.place(x=3,y=self.aumentarPosEtiqueta())
