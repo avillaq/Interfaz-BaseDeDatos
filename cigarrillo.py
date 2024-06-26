@@ -238,7 +238,7 @@ class Ventana(Frame):
             mentolado = valores[4]                        
             r = messagebox.askquestion("Eliminar", "Deseas eliminar el registro seleccionado?\n")            
             if r == messagebox.YES:
-                n = self.operacion.eliminar(marca, filtro, color, clase, mentolado)
+                n = self.operacion.eliminar(marca, filtro[0], color[0], clase, mentolado[0])
                 if n == 1:
                     messagebox.showinfo("Eliminar", 'Elemento eliminado correctamente.')
                     self.limpiaGrid()
