@@ -31,7 +31,7 @@ class Operaciones:
 
     def consultar(self):
         cur = self.cnn.cursor()
-        cur.execute("SELECT * FROM {}".format(NOMBRE_TABLA))
+        cur.execute("SELECT * FROM {} ORDER BY ComFec ASC".format(NOMBRE_TABLA))
         datos = cur.fetchall()
         cur.close()    
         return datos
@@ -174,7 +174,6 @@ class Ventana(Frame):
         opciones_color = self.operacion.obtener_opciones_color(id_fiscal_seleccionada)
         opciones_clase = self.operacion.obtener_opciones_clase(id_fiscal_seleccionada)
         opciones_mentolado = self.operacion.obtener_opciones_mentolado(id_fiscal_seleccionada)
-        print(opciones_marca)
         # Actualizar las opciones de los ComboBox con las nuevas opciones
         self.txtMarca['values'] =  [marca[0] for marca in opciones_marca]
         self.txtFiltro['values'] = [self.obtenerDatoEquivalente("filtro",f[0]) for f in opciones_filtro]
