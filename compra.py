@@ -173,12 +173,12 @@ class Ventana(Frame):
         opciones_color = self.operacion.obtener_opciones_color(id_fiscal_seleccionada)
         opciones_clase = self.operacion.obtener_opciones_clase(id_fiscal_seleccionada)
         opciones_mentolado = self.operacion.obtener_opciones_mentolado(id_fiscal_seleccionada)
-        
+        print(opciones_marca)
         # Actualizar las opciones de los ComboBox con las nuevas opciones
-        self.txtMarca['values'] = opciones_marca
+        self.txtMarca['values'] =  [marca[0] for marca in opciones_marca]
         self.txtFiltro['values'] = [self.obtenerDatoEquivalente("filtro",f[0]) for f in opciones_filtro]
         self.txtColor['values'] = [self.obtenerDatoEquivalente("color",f[0]) for f in opciones_color]
-        self.txtClase['values'] = opciones_clase
+        self.txtClase['values'] = [clase[0] for clase in opciones_clase]
         self.txtMentolado['values'] = [self.obtenerDatoEquivalente("mentolado",f[0]) for f in opciones_mentolado]
     
         # Opcional: Limpiar la selección actual de los ComboBox si es necesario
