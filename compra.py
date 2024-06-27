@@ -78,32 +78,39 @@ class Operaciones:
         cur.close()
         return id_fiscal_almacen
 
-    # Operaciones para obtener las opciones válidas para los otros campos basado en la marca seleccionada
+    # Operaciones para obtener las opciones válidas para los otros campos basado en la id fiscal seleccionada de almacen
 
-    def obtener_opciones_filtro(self, marca):
+    def obtener_opciones_marca(self, id_fiscal_almacen):
         cur = self.cnn.cursor()
-        cur.execute("SELECT DISTINCT CigFil FROM cigarrillo WHERE CigMar = %s", (marca,))
+        cur.execute("SELECT DISTINCT AlmCigMar FROM almacen WHERE AlmIdeFisEst = %s", (id_fiscal_almacen,))
+        opciones_marca = cur.fetchall()
+        cur.close()
+        return opciones_marca
+
+    def obtener_opciones_filtro(self, id_fiscal_almacen):
+        cur = self.cnn.cursor()
+        cur.execute("SELECT DISTINCT AlmCigFil FROM almacen WHERE AlmIdeFisEst = %s", (id_fiscal_almacen,))
         opciones_filtro = cur.fetchall()
         cur.close()
         return opciones_filtro
     
-    def obtener_opciones_color(self, marca):
+    def obtener_opciones_color(self, id_fiscal_almacen):
         cur = self.cnn.cursor()
-        cur.execute("SELECT DISTINCT CigCol FROM cigarrillo WHERE CigMar = %s", (marca,))
+        cur.execute("SELECT DISTINCT AlmCigCol FROM almacen WHERE AlmIdeFisEst = %s", (id_fiscal_almacen,))
         opciones_color = cur.fetchall()
         cur.close()
         return opciones_color
     
-    def obtener_opciones_clase(self, marca):
+    def obtener_opciones_clase(self, id_fiscal_almacen):
         cur = self.cnn.cursor()
-        cur.execute("SELECT DISTINCT CigClaTra FROM cigarrillo WHERE CigMar = %s", (marca,))
+        cur.execute("SELECT DISTINCT AlmClaTra FROM almacen WHERE AlmIdeFisEst = %s", (id_fiscal_almacen,))
         opciones_clase = cur.fetchall()
         cur.close()
         return opciones_clase
     
-    def obtener_opciones_mentolado(self, marca):
+    def obtener_opciones_mentolado(self, id_fiscal_almacen):
         cur = self.cnn.cursor()
-        cur.execute("SELECT DISTINCT CigCarMen FROM cigarrillo WHERE CigMar = %s", (marca,))
+        cur.execute("SELECT DISTINCT AlmCarMen FROM almacen WHERE AlmIdeFisEst = %s", (id_fiscal_almacen,))
         opciones_mentolado = cur.fetchall()
         cur.close()
         return opciones_mentolado
@@ -329,7 +336,7 @@ class Ventana(Frame):
 
         ###################################### MODIFICAR AQUI ###############################################
         # Solo se debe modificar el nombre de las etiquetas y los Entry
-        lbl1 = Label(frame2,text="Identificacion Fiscal: ")
+        lbl1 = Label(frame2,text="Identificacion Fiscal*: ")
         lbl1.place(x=3,y=self.aumentarPosEtiqueta())        
         self.txtIdentificacion=ttk.Combobox(frame2, state="readonly")
         self.txtIdentificacion.place(x=3,y=self.aumentarPosCampo(),width=130, height=20)   
