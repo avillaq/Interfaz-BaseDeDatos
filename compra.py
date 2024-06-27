@@ -2,6 +2,7 @@ import mysql.connector
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
+from tkcalendar import DateEntry
 from conf_general import *
 
 NOMBRE_TABLA = "compra"
@@ -384,8 +385,9 @@ class Ventana(Frame):
         
         lbl7 = Label(frame2,text="Fecha de compra: ")
         lbl7.place(x=3,y=self.aumentarPosEtiqueta())
-        self.txtFechaCompra=Entry(frame2)
+        self.txtFechaCompra = DateEntry(frame2, date_pattern='y-mm-dd')
         self.txtFechaCompra.place(x=3,y=self.aumentarPosCampo(),width=130, height=20)
+        self.txtFechaCompra.delete(0,END)
 
         lbl8 = Label(frame2,text="Cantidad comprada: ")
         lbl8.place(x=3,y=self.aumentarPosEtiqueta())
