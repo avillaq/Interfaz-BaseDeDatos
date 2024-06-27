@@ -165,21 +165,24 @@ class Ventana(Frame):
         return dato
     
     def on_id_fiscal_selected(self, event):
-        marca_seleccionada = self.txtMarca.get()
+        id_fiscal_seleccionada = self.txtIdentificacion.get()
         
         # Consultar las opciones válidas para los otros campos basado en la marca seleccionada
-        opciones_filtro = self.operacion.obtener_opciones_filtro(marca_seleccionada)
-        opciones_color = self.operacion.obtener_opciones_color(marca_seleccionada)
-        opciones_clase = self.operacion.obtener_opciones_clase(marca_seleccionada)
-        opciones_mentolado = self.operacion.obtener_opciones_mentolado(marca_seleccionada)
+        opciones_marca = self.operacion.obtener_opciones_marca(id_fiscal_seleccionada)
+        opciones_filtro = self.operacion.obtener_opciones_filtro(id_fiscal_seleccionada)
+        opciones_color = self.operacion.obtener_opciones_color(id_fiscal_seleccionada)
+        opciones_clase = self.operacion.obtener_opciones_clase(id_fiscal_seleccionada)
+        opciones_mentolado = self.operacion.obtener_opciones_mentolado(id_fiscal_seleccionada)
         
         # Actualizar las opciones de los ComboBox con las nuevas opciones
+        self.txtMarca['values'] = opciones_marca
         self.txtFiltro['values'] = [self.obtenerDatoEquivalente("filtro",f[0]) for f in opciones_filtro]
         self.txtColor['values'] = [self.obtenerDatoEquivalente("color",f[0]) for f in opciones_color]
         self.txtClase['values'] = opciones_clase
         self.txtMentolado['values'] = [self.obtenerDatoEquivalente("mentolado",f[0]) for f in opciones_mentolado]
     
         # Opcional: Limpiar la selección actual de los ComboBox si es necesario
+        self.txtMarca.set('')
         self.txtColor.set('')
         self.txtFiltro.set('')
         self.txtClase.set('')
@@ -192,7 +195,9 @@ class Ventana(Frame):
         self.txtColor.configure(state=estado)
         self.txtClase.configure(state=estado)
         self.txtMentolado.configure(state=estado)
-        self.txtUnidades.configure(state=estado)
+        self.txtFechaCompra.configure(state=estado)
+        self.txtCantidad.configure(state=estado)
+        self.txtPrecio.configure(state=estado)
 
     def limpiarCajas(self):
         self.txtIdentificacion.delete(0,END)
@@ -201,7 +206,9 @@ class Ventana(Frame):
         self.txtColor.delete(0,END)
         self.txtClase.delete(0,END)
         self.txtMentolado.delete(0,END)
-        self.txtUnidades.delete(0,END)
+        self.txtFechaCompra.delete(0,END)
+        self.txtCantidad.delete(0,END)
+        self.txtPrecio.delete(0,END)
         
     def habilitarBtnOper(self,estado):
         self.btnAdicionar.configure(state=estado)                
@@ -220,7 +227,7 @@ class Ventana(Frame):
         ############################################################################################### 
         datos = self.operacion.consultar()        
         for row in datos:            
-            self.grid.insert("",END,text=row[0], values=(row[0], row[1], self.obtenerDatoEquivalente("filtro", row[2]), self.obtenerDatoEquivalente("color", row[3]), row[4], self.obtenerDatoEquivalente("mentolado", row[5]), row[6]))
+            self.grid.insert("",END,text=row[0], values=(row[0], row[1], self.obtenerDatoEquivalente("filtro", row[2]), self.obtenerDatoEquivalente("color", row[3]), row[4], self.obtenerDatoEquivalente("mentolado", row[5]), row[6], row[7], row[8]))
         
         if len(self.grid.get_children()) > 0:
             self.grid.selection_set( self.grid.get_children()[0] )
@@ -235,10 +242,10 @@ class Ventana(Frame):
     def fGuardar(self):
         ############################################################################################### 
         if self.id ==-1:       
-            self.operacion.insertar(self.txtIdentificacion.get(),self.txtMarca.get(), self.txtFiltro.get()[0], self.txtColor.get()[0], self.txtClase.get(), self.txtMentolado.get()[0], self.txtUnidades.get())         
+            self.operacion.insertar(self.txtIdentificacion.get(),self.txtMarca.get(), self.txtFiltro.get()[0], self.txtColor.get()[0], self.txtClase.get(), self.txtMentolado.get()[0], self.txtFechaCompra.get(), self.txtCantidad.get(), self.txtPrecio.get())       
             messagebox.showinfo("Insertar", 'Elemento insertado correctamente.')
         else:
-            self.operacion.modificar(self.txtIdentificacion.get(),self.txtMarca.get(), self.txtFiltro.get()[0], self.txtColor.get()[0], self.txtClase.get(), self.txtMentolado.get()[0], self.txtUnidades.get())
+            self.operacion.modificar(self.txtIdentificacion.get(),self.txtMarca.get(), self.txtFiltro.get()[0], self.txtColor.get()[0], self.txtClase.get(), self.txtMentolado.get()[0], self.txtFechaCompra.get(), self.txtCantidad.get(), self.txtPrecio.get())
             messagebox.showinfo("Modificar", 'Elemento modificado correctamente.')
             self.id = -1  
             
@@ -270,8 +277,9 @@ class Ventana(Frame):
             self.txtColor.insert(0,valores[3])
             self.txtClase.insert(0,valores[4])
             self.txtMentolado.insert(0,valores[5])
-            self.txtUnidades.insert(0,valores[6])
-
+            self.txtFechaCompra.insert(0,valores[6])
+            self.txtCantidad.insert(0,valores[7])
+            self.txtPrecio.insert(0,valores[8])
             
             self.habilitarBtnOper("disabled")
             self.habilitarBtnGuardar("normal")
@@ -283,8 +291,9 @@ class Ventana(Frame):
             self.txtFiltro.configure(state="disabled")
             self.txtClase.configure(state="disabled")
             self.txtMentolado.configure(state="disabled")
+            self.txtFechaCompra.configure(state="disabled")
 
-            self.txtUnidades.focus()
+            self.txtCantidad.focus()
                                         
     def fEliminar(self):
         selected = self.grid.focus()                               
@@ -298,10 +307,11 @@ class Ventana(Frame):
             filtro = valores[2]
             color = valores[3]
             clase = valores[4]
-            mentolado = valores[5] 
+            mentolado = valores[5]
+            fecha_compra = valores[6]
             r = messagebox.askquestion("Eliminar", "Deseas eliminar el registro seleccionado?\n")            
             if r == messagebox.YES:
-                n = self.operacion.eliminar(id_fiscal, marca, filtro[0], color[0], clase, mentolado[0])
+                n = self.operacion.eliminar(id_fiscal, marca, filtro[0], color[0], clase, mentolado[0], fecha_compra)
                 if n == 1:
                     messagebox.showinfo("Eliminar", 'Elemento eliminado correctamente.')
                     self.limpiaGrid()
@@ -343,6 +353,8 @@ class Ventana(Frame):
         id_fiscal = self.operacion.obtener_id_fiscal_almacen()
         self.txtIdentificacion['values'] = [f[0] for f in id_fiscal]
         self.txtIdentificacion.bind("<<ComboboxSelected>>", self.on_id_fiscal_selected)
+
+
         # Las opciones estaran vacias hasta que se seleccione una identificacion fiscal del almacen
 
         lbl2 = Label(frame2,text="Marca: ")
@@ -369,12 +381,23 @@ class Ventana(Frame):
         lbl6.place(x=3,y=self.aumentarPosEtiqueta())
         self.txtMentolado = ttk.Combobox(frame2, state="readonly", values=[])
         self.txtMentolado.place(x=3, y=self.aumentarPosCampo(), width=130, height=20)
-        lbl7 = Label(frame2,text="Unidades en Stock: ")
+        
+        lbl7 = Label(frame2,text="Fecha de compra: ")
         lbl7.place(x=3,y=self.aumentarPosEtiqueta())
-        self.txtUnidades=Entry(frame2)
-        self.txtUnidades.place(x=3,y=self.aumentarPosCampo(),width=130, height=20)
+        self.txtFechaCompra=Entry(frame2)
+        self.txtFechaCompra.place(x=3,y=self.aumentarPosCampo(),width=130, height=20)
 
-               
+        lbl8 = Label(frame2,text="Cantidad comprada: ")
+        lbl8.place(x=3,y=self.aumentarPosEtiqueta())
+        self.txtCantidad=Entry(frame2)
+        self.txtCantidad.place(x=3,y=self.aumentarPosCampo(),width=130, height=20)
+        
+        lbl9 = Label(frame2,text="Precio de compra: ")
+        lbl9.place(x=3,y=self.aumentarPosEtiqueta())
+        self.txtPrecio=Entry(frame2)
+        self.txtPrecio.place(x=3,y=self.aumentarPosCampo(),width=130, height=20)
+        
+
         ######################################################################################################
 
 
@@ -393,7 +416,7 @@ class Ventana(Frame):
         ###################################### MODIFICAR AQUI ###############################################
 
         # Modificar los nombres de las columnas en la lista nombre_columnas
-        nombre_columnas = ["Identificacion Fiscal", "Marca", "Filtro", "Color", "Clase de Tratamiento", "Mentolado", "Unidades en Stock"]
+        nombre_columnas = ["Id Fiscal", "Marca", "Filtro", "Color", "Clase de Tratamiento", "Mentolado", "Fecha Compra", "Cantidad", "Precio"]
 
         ######################################################################################################
 
