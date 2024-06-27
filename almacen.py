@@ -167,7 +167,7 @@ class Ventana(Frame):
         # Actualizar las opciones de los ComboBox con las nuevas opciones
         self.txtFiltro['values'] = [self.obtenerDatoEquivalente("filtro",f[0]) for f in opciones_filtro]
         self.txtColor['values'] = [self.obtenerDatoEquivalente("color",f[0]) for f in opciones_color]
-        self.txtClase['values'] = opciones_clase
+        self.txtClase['values'] = [clase[0] for clase in opciones_clase]
         self.txtMentolado['values'] = [self.obtenerDatoEquivalente("mentolado",f[0]) for f in opciones_mentolado]
     
         # Opcional: Limpiar la selección actual de los ComboBox si es necesario
