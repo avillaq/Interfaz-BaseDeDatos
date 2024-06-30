@@ -30,7 +30,7 @@ class Operaciones:
 
     def consultar(self):
         cur = self.cnn.cursor()
-        cur.execute("SELECT * FROM {}".format(NOMBRE_TABLA))
+        cur.execute("SELECT * FROM {} ORDER BY CAST(AlmIdeFisEst AS INTEGER) ASC".format(NOMBRE_TABLA))
         datos = cur.fetchall()
         cur.close()    
         return datos
