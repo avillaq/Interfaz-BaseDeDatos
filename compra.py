@@ -63,18 +63,9 @@ class Operaciones:
         cur.close()
         return n
     
-    """
-    def obtener_marcas(self):
-        cur = self.cnn.cursor()
-        cur.execute("SELECT DISTINCT CigMar FROM cigarrillo") 
-        marcas = cur.fetchall()
-        cur.close()
-        return marcas 
-    """
-    
     def obtener_id_fiscal_almacen(self):
         cur = self.cnn.cursor()
-        cur.execute("SELECT DISTINCT AlmIdeFisEst FROM almacen") 
+        cur.execute("SELECT DISTINCT AlmIdeFisEst FROM almacen ORDER BY CAST(AlmIdeFisEst AS INTEGER) ASC") 
         id_fiscal_almacen = cur.fetchall()
         cur.close()
         return id_fiscal_almacen
