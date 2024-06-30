@@ -1,6 +1,6 @@
 
 # Definir las constantes para el tamaño de la ventana
-V_ANCHO = 800
+V_ANCHO = 900
 V_ALTO = 500
 
 # Tamaño de la tabla # 448
