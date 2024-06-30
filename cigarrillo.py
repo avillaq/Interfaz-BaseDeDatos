@@ -35,7 +35,7 @@ class Operaciones:
         cur.close()    
         return datos
     
-    def insertar(self, CigMar, CigFil, CigCol, CigClaTra, CigCarMen, CigCanNic, CigCanAlq, CigPreCos, CigPreVen):
+    def insertar(self, CigMar, CigFil, CigCol, CigClaTra, CigCarMen, CigCanNic, CigCanAlq, CigPreVen, CigPreCos):
         cur = self.cnn.cursor()
         sql = "INSERT INTO {} (CigMar, CigCol, CigFil, CigClaTra, CigCarMen, CigCanNic, CigCanAlq, CigPreCos, CigPreVen) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)".format(NOMBRE_TABLA)
         cur.execute(sql, (CigMar, CigCol, CigFil, CigClaTra, CigCarMen, CigCanNic, CigCanAlq, CigPreCos, CigPreVen))
@@ -53,7 +53,7 @@ class Operaciones:
         cur.close()
         return n
 
-    def modificar(self, CigMar, CigFil, CigCol, CigClaTra, CigCarMen, CigCanNic, CigCanAlq, CigPreCos, CigPreVen):
+    def modificar(self, CigMar, CigFil, CigCol, CigClaTra, CigCarMen, CigCanNic, CigCanAlq, CigPreVen, CigPreCos):
         cur = self.cnn.cursor()
         sql = "UPDATE {} SET CigCanNic = %s, CigCanAlq = %s, CigPreCos = %s, CigPreVen = %s WHERE CigMar = %s AND CigCol = %s AND CigFil = %s AND CigClaTra = %s AND CigCarMen = %s".format(NOMBRE_TABLA)
         cur.execute(sql, (CigCanNic, CigCanAlq, CigPreCos, CigPreVen, CigMar, CigCol, CigFil, CigClaTra, CigCarMen))
@@ -171,10 +171,10 @@ class Ventana(Frame):
     def fGuardar(self):
         ############################################################################################### 
         if self.id ==-1:       
-            self.operacion.insertar(self.txtMarca.get(), self.txtFiltro.get()[0], self.txtColor.get()[0], self.txtClase.get(), self.txtMentolado.get()[0], self.txtCanNicotina.get(), self.txtCanAlquitran.get(), self.txtCosto.get(), self.txtVenta.get())      
+            self.operacion.insertar(self.txtMarca.get(), self.txtFiltro.get()[0], self.txtColor.get()[0], self.txtClase.get(), self.txtMentolado.get()[0], self.txtCanNicotina.get(), self.txtCanAlquitran.get(), self.txtVenta.get(), self.txtCosto.get())      
             messagebox.showinfo("Insertar", 'Elemento insertado correctamente.')
         else:
-            self.operacion.modificar(self.txtMarca.get(), self.txtFiltro.get()[0], self.txtColor.get()[0], self.txtClase.get(), self.txtMentolado.get()[0], self.txtCanNicotina.get(), self.txtCanAlquitran.get(), self.txtCosto.get(), self.txtVenta.get())
+            self.operacion.modificar(self.txtMarca.get(), self.txtFiltro.get()[0], self.txtColor.get()[0], self.txtClase.get(), self.txtMentolado.get()[0], self.txtCanNicotina.get(), self.txtCanAlquitran.get(), self.txtVenta.get(), self.txtCosto.get())
             messagebox.showinfo("Modificar", 'Elemento modificado correctamente.')
             self.id = -1  
             
@@ -207,8 +207,8 @@ class Ventana(Frame):
             self.txtMentolado.insert(0,valores[4])
             self.txtCanNicotina.insert(0,valores[5])
             self.txtCanAlquitran.insert(0,valores[6])
-            self.txtCosto.insert(0,valores[7])
-            self.txtVenta.insert(0,valores[8])
+            self.txtVenta.insert(0,valores[7])
+            self.txtCosto.insert(0,valores[8])
             
             self.habilitarBtnOper("disabled")
             self.habilitarBtnGuardar("normal")
@@ -306,14 +306,15 @@ class Ventana(Frame):
         lbl7.place(x=3,y=self.aumentarPosEtiqueta())
         self.txtCanAlquitran=Entry(frame2)
         self.txtCanAlquitran.place(x=3,y=self.aumentarPosCampo(),width=130, height=20)
-        lbl8 = Label(frame2,text="Precio Costo (unidad): ")
-        lbl8.place(x=3,y=self.aumentarPosEtiqueta())
-        self.txtCosto=Entry(frame2)
-        self.txtCosto.place(x=3,y=self.aumentarPosCampo(),width=130, height=20)
         lbl9 = Label(frame2,text="Precio Venta (unidad): ")
         lbl9.place(x=3,y=self.aumentarPosEtiqueta())
         self.txtVenta=Entry(frame2)
         self.txtVenta.place(x=3,y=self.aumentarPosCampo(),width=130, height=20)
+        lbl8 = Label(frame2,text="Precio Costo (unidad): ")
+        lbl8.place(x=3,y=self.aumentarPosEtiqueta())
+        self.txtCosto=Entry(frame2)
+        self.txtCosto.place(x=3,y=self.aumentarPosCampo(),width=130, height=20)
+        
                
         ######################################################################################################
 
@@ -333,7 +334,7 @@ class Ventana(Frame):
         ###################################### MODIFICAR AQUI ###############################################
 
         # Modificar los nombres de las columnas en la lista nombre_columnas
-        nombre_columnas = ["Marca", "Filtro", "Color", "Clase Tratamiento", "Mentolado", "C. Nicotina", "C. Alquitran", "P. de Costo", "P. de Venta"]
+        nombre_columnas = ["Marca", "Filtro", "Color", "Clase Tratamiento", "Mentolado", "C. Nicotina", "C. Alquitran", "P. de Venta", "P. de Costo"]
 
         ######################################################################################################
 
