@@ -408,7 +408,7 @@ class Ventana(Frame):
         ###################################### MODIFICAR AQUI ###############################################
 
         # Modificar los nombres de las columnas en la lista nombre_columnas
-        nombre_columnas = ["Id Fiscal", "Marca", "Filtro", "Color", "Clase de Tratamiento", "Mentolado", "Fecha Compra", "Cantidad", "Precio"]
+        nombre_columnas = ["Id Fiscal", "Marca", "Filtro", "Color", "Clase de Tratamiento", "Mentolado", "Fecha Compra", "Cantidad", "Precio Venta"]
 
         ######################################################################################################
 
